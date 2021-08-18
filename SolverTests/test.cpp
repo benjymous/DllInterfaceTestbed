@@ -1,3 +1,4 @@
+#include "pch.h"
 #include <iostream>
 #include "catch.hpp"
 #include "Solver.h"
@@ -30,6 +31,7 @@ bool operator==(const Sandbox::Vec3& left, const Sandbox::Vec3& right)
             left.z == right.z;
 }
 
+
 SCENARIO("Solver tests") {
 
     GIVEN("No manual setup") {
@@ -60,7 +62,7 @@ SCENARIO("Solver tests") {
         Sandbox::Vec3 expected{ 2,3,4 };
 
 		THEN("The centre point should be as expected") {
-			CHECK(centre == expected);
+			CHECK((centre == expected));
 		}
 	}
 }

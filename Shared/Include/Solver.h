@@ -4,7 +4,7 @@
 #include "ISolverNode.h"
 #include <memory>
 
-ExportLibrary(SolverDll);
+ExportLibrary(SolverLib);
 
 namespace Sandbox
 {
@@ -25,5 +25,5 @@ namespace Sandbox
 	};
 }
 
-ExportType(Sandbox, SolverDll, INodeList)
-ExportType(Sandbox, SolverDll, ISolver)
+ExportType(Sandbox, SolverLib, INodeList)
+ExportType(Sandbox, SolverLib, ISolver)

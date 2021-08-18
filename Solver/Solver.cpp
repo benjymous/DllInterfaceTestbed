@@ -50,5 +50,5 @@ namespace Sandbox
 	};
 }
 
-DeclareTypeFactory(Sandbox, SolverDll, ISolver, Solver);
-DeclareTypeFactory(Sandbox, SolverDll, INodeList, NodeList);
+DeclareTypeFactory(Sandbox, SolverLib, ISolver, Solver);
+DeclareTypeFactory(Sandbox, SolverLib, INodeList, NodeList);
