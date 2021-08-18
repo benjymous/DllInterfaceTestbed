@@ -1,16 +1,16 @@
 #include "pch.h"
 #include <Solver.h>
 #include <vector>
+#include <memory>
 
 namespace Sandbox
 {
-
 	class NodeList : public INodeList
 	{
 	public:
 		void AddNode(ISolverNode* pNode)
 		{
-			_nodes.push_back(pNode);
+			_nodes.push_back(std::shared_ptr<ISolverNode>(pNode));
 		}
 		int Count() const
 		{
@@ -18,10 +18,10 @@ namespace Sandbox
 		}
 		const ISolverNode* At(int idx) const
 		{
-			return _nodes[idx];
+			return _nodes[idx].get();
 		}
 	private:
-		std::vector<ISolverNode*> _nodes;
+		std::vector<std::shared_ptr<ISolverNode>> _nodes;
 	};
 
 	class Solver : public ISolver
@@ -48,8 +48,7 @@ namespace Sandbox
 			return result;
 		}
 	};
-
 }
 
-DeclareTypeFactory(Sandbox, Solver, ISolver, Solver);
-DeclareTypeFactory(Sandbox, Solver, INodeList, NodeList);
+DeclareTypeFactory(Sandbox, SolverDll, ISolver, Solver);
+DeclareTypeFactory(Sandbox, SolverDll, INodeList, NodeList);

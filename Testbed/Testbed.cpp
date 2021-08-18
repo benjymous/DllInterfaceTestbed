@@ -11,6 +11,12 @@ public:
     TestbedNode(double x, double y, double z)
     {
         _location = { x,y,z };
+        printf("Created node %f,%f,%f\r\n", x, y, z);
+    }
+
+    ~TestbedNode()
+    {
+        printf("Deleted node \r\n");
     }
 
     virtual Sandbox::Vec3 GetLocation() const
@@ -31,25 +37,22 @@ bool operator==(Sandbox::Vec3& left, Sandbox::Vec3& right)
 int main()
 {
     // This Dll is lazy loaded at runtime - we don't link the .lib into the project
+
     // The only shared resource are the interface headers
-    Sandbox::ISolver* pSolver = Solver_ISolver_Construct();
+    auto pSolver = Sandbox::MakeISolver();
     assert(pSolver != nullptr);
 
     // This NodeList class lives entirely in the solver - the testbed only has an interface pointer
-    Sandbox::INodeList* pNodeList = Solver_INodeList_Construct();
+    auto pNodeList = Sandbox::MakeINodeList();
 
     // these TestbedNodes live entirely in the testbed - the nodelist only gets interface pointers 
     pNodeList->AddNode(new TestbedNode( 1,2,3 ));
     pNodeList->AddNode(new TestbedNode( 2,3,4 ));
     pNodeList->AddNode(new TestbedNode( 3,4,5 ));
 
-    Sandbox::Vec3 centre = pSolver->CentrePoint(pNodeList);
-
-    Solver_INodeList_Delete(pNodeList);
+    Sandbox::Vec3 centre = pSolver->CentrePoint(pNodeList.get());
 
     Sandbox::Vec3 expected{ 2,3,4 };
 
     assert(centre == expected);
-
-    Solver_ISolver_Delete(pSolver);
 }

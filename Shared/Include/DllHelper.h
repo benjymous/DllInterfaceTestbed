@@ -1,15 +1,13 @@
 #pragma once
 
-#ifdef SOLVER_EXPORTS
-#define SOLVERDLL_API __declspec(dllexport) 
-#else
-#define SOLVERDLL_API __declspec(dllimport) 
-#endif
+#include <memory>
 
 #define STRINGIFY(x) #x
 #define TOSTRING(x) STRINGIFY(x)
 
 #ifdef SOLVER_EXPORTS
+#define SOLVERDLL_API __declspec(dllexport) 
+
 #define ExportLibrary(LibraryName)
 
 #define ExportType(Namespace, LibraryName, TypeName) \
@@ -39,8 +37,9 @@ printf("Deleted a %s\r\n", TOSTRING(TypeName)); \
 inline static HMODULE LibraryName##Get() \
 { \
 	if (LibraryName##RefCount == 0) { \
-		LibraryName##Dll = LoadLibrary(L"Solver.dll"); \
-		printf("Loaded Library\r\n"); \
+		const char* dllName = TOSTRING(LibraryName)".dll"; \
+		LibraryName##Dll = LoadLibraryA(dllName); \
+		printf("Loaded Library '%s'\r\n", dllName); \
 	} \
 	LibraryName##RefCount++; \
 	assert(LibraryName##Dll != nullptr); \
@@ -68,8 +67,11 @@ inline static void LibraryName##_##TypeName##_Delete(Namespace::TypeName* obj) {
 	DestroyFn pfnDestroy = hDLL ? DestroyFn(GetProcAddress(hDLL, funcName)) : nullptr; \
 	assert(pfnDestroy != nullptr); \
 	if (pfnDestroy) pfnDestroy(obj); \
+} \
+namespace Namespace { \
+typedef std::shared_ptr<TypeName> TypeName##Ptr;  \
+TypeName##Ptr Make##TypeName() { return TypeName##Ptr( LibraryName##_##TypeName##_Construct(), LibraryName##_##TypeName##_Delete ); } \
 }
-
 
 #endif
 
