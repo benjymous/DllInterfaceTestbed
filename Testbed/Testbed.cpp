@@ -5,16 +5,16 @@
 #include <assert.h>
 #include "Solver.h"
 
-class TestbedNode : public Sandbox::ISolverNode
+class UnitTestNode : public Sandbox::ISolverNode
 {
 public: 
-    TestbedNode(double x, double y, double z)
+    UnitTestNode(double x, double y, double z)
     {
         _location = { x,y,z };
         printf("Created node %f,%f,%f\r\n", x, y, z);
     }
 
-    ~TestbedNode()
+    ~UnitTestNode()
     {
         printf("Deleted node \r\n");
     }
@@ -46,9 +46,9 @@ int main()
     auto pNodeList = Sandbox::MakeINodeList();
 
     // these TestbedNodes live entirely in the testbed - the nodelist only gets interface pointers 
-    pNodeList->AddNode(new TestbedNode( 1,2,3 ));
-    pNodeList->AddNode(new TestbedNode( 2,3,4 ));
-    pNodeList->AddNode(new TestbedNode( 3,4,5 ));
+    pNodeList->AddNode(new UnitTestNode( 1,2,3 ));
+    pNodeList->AddNode(new UnitTestNode( 2,3,4 ));
+    pNodeList->AddNode(new UnitTestNode( 3,4,5 ));
 
     Sandbox::Vec3 centre = pSolver->CentrePoint(pNodeList.get());
 
