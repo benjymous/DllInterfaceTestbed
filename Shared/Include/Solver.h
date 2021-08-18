@@ -2,6 +2,7 @@
 
 #include "DllHelper.h"
 #include "ISolverNode.h"
+#include <memory>
 
 ExportLibrary(SolverDll);
 
