@@ -45,7 +45,11 @@ int main()
 
     Sandbox::Vec3 centre = pSolver->CentrePoint(pNodeList);
 
+    Solver_INodeList_Delete(pNodeList);
+
     Sandbox::Vec3 expected{ 2,3,4 };
 
     assert(centre == expected);
+
+    Solver_ISolver_Delete(pSolver);
 }

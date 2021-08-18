@@ -15,12 +15,19 @@
 #define ExportType(Namespace, LibraryName, TypeName) \
 extern "C" { \
 	extern SOLVERDLL_API Namespace::TypeName* LibraryName##_##TypeName##_Create(); \
+	extern SOLVERDLL_API void LibraryName##_##TypeName##_Destroy(Namespace::TypeName* obj); \
 }
 
 #define DeclareTypeFactory(Namespace, LibraryName, InterfaceName, TypeName) \
 Namespace::InterfaceName* LibraryName##_##InterfaceName##_Create() \
 { \
+printf("Created a %s\r\n", TOSTRING(TypeName)); \
 return new Namespace::TypeName(); \
+} \
+void LibraryName##_##InterfaceName##_Destroy(Namespace::InterfaceName* obj) \
+{ \
+delete obj; \
+printf("Deleted a %s\r\n", TOSTRING(TypeName)); \
 }
 
 #else
@@ -48,11 +55,21 @@ inline static Namespace::TypeName* LibraryName##_##TypeName##_Construct() { \
 	HMODULE hDLL = LibraryName##Get(); \
 	typedef Namespace::TypeName* (*CreateFn)(); \
 	const char* funcName =  TOSTRING(LibraryName##_##TypeName##_Create); \
-	printf("Loading '%s'\r\n", funcName); \
+	printf("Loading dll fn '%s'\r\n", funcName); \
 	CreateFn pfnCreate = hDLL ? CreateFn(GetProcAddress(hDLL, funcName)) : nullptr; \
 	assert(pfnCreate != nullptr); \
 	return pfnCreate ? pfnCreate() : nullptr; \
+} \
+inline static void LibraryName##_##TypeName##_Delete(Namespace::TypeName* obj) { \
+	HMODULE hDLL = LibraryName##Get(); \
+	typedef void (*DestroyFn)(Namespace::TypeName*); \
+	const char* funcName =  TOSTRING(LibraryName##_##TypeName##_Destroy); \
+	printf("Loading dll fn '%s'\r\n", funcName); \
+	DestroyFn pfnDestroy = hDLL ? DestroyFn(GetProcAddress(hDLL, funcName)) : nullptr; \
+	assert(pfnDestroy != nullptr); \
+	if (pfnDestroy) pfnDestroy(obj); \
 }
+
 
 #endif
 
