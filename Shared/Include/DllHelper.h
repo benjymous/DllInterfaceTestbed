@@ -12,10 +12,10 @@
 
 	#define ExportLibrary(LibraryName)
 
-	#define ExportType(Namespace, LibraryName, TypeName) \
+	#define ExportType(Namespace, LibraryName, InterfaceName) \
 	extern "C" { \
-		extern SOLVERDLL_API Namespace::TypeName* LibraryName##_##TypeName##_Create(); \
-		extern SOLVERDLL_API void LibraryName##_##TypeName##_Destroy(Namespace::TypeName* obj); \
+		extern SOLVERDLL_API Namespace::InterfaceName* LibraryName##_##InterfaceName##_Create(); \
+		extern SOLVERDLL_API void LibraryName##_##InterfaceName##_Destroy(Namespace::InterfaceName* obj); \
 	}
 
 	#define DeclareTypeFactory(Namespace, LibraryName, InterfaceName, TypeName) \
@@ -51,28 +51,28 @@
 	#define STRINGIFY(x) #x
 	#define TOSTRING(x) STRINGIFY(x)
 
-	#define ExportType(Namespace, LibraryName, TypeName) \
-	inline static Namespace::TypeName* LibraryName##_##TypeName##_Construct() { \
+	#define ExportType(Namespace, LibraryName, InterfaceName) \
+	inline static Namespace::InterfaceName* LibraryName##_##InterfaceName##_Construct() { \
 		HMODULE hDLL = LibraryName##Get(); \
-		typedef Namespace::TypeName* (*CreateFn)(); \
-		const char* funcName =  TOSTRING(LibraryName##_##TypeName##_Create); \
+		typedef Namespace::InterfaceName* (*CreateFn)(); \
+		const char* funcName =  TOSTRING(LibraryName##_##InterfaceName##_Create); \
 		printf("Loading dll fn '%s'\r\n", funcName); \
 		CreateFn pfnCreate = hDLL ? CreateFn(GetProcAddress(hDLL, funcName)) : nullptr; \
 		assert(pfnCreate != nullptr); \
 		return pfnCreate ? pfnCreate() : nullptr; \
 	} \
-	inline static void LibraryName##_##TypeName##_Delete(Namespace::TypeName* obj) { \
+	inline static void LibraryName##_##InterfaceName##_Delete(Namespace::InterfaceName* obj) { \
 		HMODULE hDLL = LibraryName##Get(); \
-		typedef void (*DestroyFn)(Namespace::TypeName*); \
-		const char* funcName =  TOSTRING(LibraryName##_##TypeName##_Destroy); \
+		typedef void (*DestroyFn)(Namespace::InterfaceName*); \
+		const char* funcName =  TOSTRING(LibraryName##_##InterfaceName##_Destroy); \
 		printf("Loading dll fn '%s'\r\n", funcName); \
 		DestroyFn pfnDestroy = hDLL ? DestroyFn(GetProcAddress(hDLL, funcName)) : nullptr; \
 		assert(pfnDestroy != nullptr); \
 		if (pfnDestroy) pfnDestroy(obj); \
 	} \
 	namespace Namespace { \
-		typedef std::shared_ptr<TypeName> TypeName##Ptr;  \
-		TypeName##Ptr Make##TypeName() { return TypeName##Ptr( LibraryName##_##TypeName##_Construct(), LibraryName##_##TypeName##_Delete ); } \
+		typedef std::shared_ptr<InterfaceName> InterfaceName##Ptr;  \
+		InterfaceName##Ptr Make##InterfaceName() { return InterfaceName##Ptr( LibraryName##_##InterfaceName##_Construct(), LibraryName##_##InterfaceName##_Delete ); } \
 	}
 
 #endif
