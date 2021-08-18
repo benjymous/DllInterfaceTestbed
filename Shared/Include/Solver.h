@@ -1,12 +1,8 @@
 #pragma once
-
+#include "DllHelper.h"
 #include "ISolverNode.h"
 
-#ifdef SOLVER_EXPORTS
-#define SOLVERDLL_API __declspec(dllexport) 
-#else
-#define SOLVERDLL_API __declspec(dllimport) 
-#endif
+ExportLibrary(Solver);
 
 namespace Sandbox
 {
@@ -22,26 +18,9 @@ namespace Sandbox
 	{
 		virtual ~ISolver() {}
 		virtual Vec3 CentrePoint(const INodeList* pNodes) = 0;
-
-		virtual INodeList* CreateNodeList() = 0;
 	};
-
-#ifndef SOLVER_EXPORTS
-inline static ISolver* InitSolverDll()
-{
-	HMODULE hDLL = LoadLibrary(L"Solver.dll");
-	typedef ISolver* (*CreateSolverFn)();
-	CreateSolverFn pfnCreateSolver = hDLL ? CreateSolverFn(GetProcAddress(hDLL, "CreateSolver")) : nullptr;
-	return pfnCreateSolver ? pfnCreateSolver() : nullptr;
-}
-#endif
 }
 
-#ifdef SOLVER_EXPORTS
-	extern "C" /*Important for avoiding Name decoration*/
-	{
-		extern SOLVERDLL_API Sandbox::ISolver* CreateSolver();
-	} 
-#endif
-
+ExportType(Sandbox, Solver, INodeList)
+ExportType(Sandbox, Solver, ISolver)
 

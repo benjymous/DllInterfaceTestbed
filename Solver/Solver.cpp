@@ -2,58 +2,54 @@
 #include <Solver.h>
 #include <vector>
 
-class NodeList : public Sandbox::INodeList
+namespace Sandbox
 {
-public:
-	void AddNode(Sandbox::ISolverNode* pNode)
-	{
-		_nodes.push_back(pNode);
-	}
-	int Count() const
-	{
-		return _nodes.size();
-	}
-	const Sandbox::ISolverNode* At(int idx) const
-	{
-		return _nodes[idx];
-	}
-private:
-	std::vector<Sandbox::ISolverNode*> _nodes;
-};
 
-class Solver : public Sandbox::ISolver
-{
-public:
-
-	Sandbox::Vec3 CentrePoint(const Sandbox::INodeList* pNodes)
+	class NodeList : public INodeList
 	{
-		Sandbox::Vec3 result{ 0,0,0 };
-
-		for (int i = 0; i < pNodes->Count(); ++i)
+	public:
+		void AddNode(ISolverNode* pNode)
 		{
-			Sandbox::Vec3 pos = pNodes->At(i)->GetLocation();
-
-			result.x += pos.x;
-			result.y += pos.y;
-			result.z += pos.z;
+			_nodes.push_back(pNode);
 		}
+		int Count() const
+		{
+			return _nodes.size();
+		}
+		const ISolverNode* At(int idx) const
+		{
+			return _nodes[idx];
+		}
+	private:
+		std::vector<ISolverNode*> _nodes;
+	};
 
-		result.x /= pNodes->Count();
-		result.y /= pNodes->Count();
-		result.z /= pNodes->Count();
-
-		return result;
-	}
-
-	virtual Sandbox::INodeList* CreateNodeList()
+	class Solver : public ISolver
 	{
-		return new NodeList();
-	}
+	public:
 
-};
+		Vec3 CentrePoint(const INodeList* pNodes)
+		{
+			Vec3 result{ 0,0,0 };
 
-Sandbox::ISolver* CreateSolver()
-{
-	return new Solver();
+			for (int i = 0; i < pNodes->Count(); ++i)
+			{
+				Vec3 pos = pNodes->At(i)->GetLocation();
+
+				result.x += pos.x;
+				result.y += pos.y;
+				result.z += pos.z;
+			}
+
+			result.x /= pNodes->Count();
+			result.y /= pNodes->Count();
+			result.z /= pNodes->Count();
+
+			return result;
+		}
+	};
+
 }
 
+DeclareTypeFactory(Sandbox, Solver, ISolver, Solver);
+DeclareTypeFactory(Sandbox, Solver, INodeList, NodeList);

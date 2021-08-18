@@ -32,11 +32,11 @@ int main()
 {
     // This Dll is lazy loaded at runtime - we don't link the .lib into the project
     // The only shared resource are the interface headers
-    Sandbox::ISolver* pSolver = Sandbox::InitSolverDll();
+    Sandbox::ISolver* pSolver = Solver_ISolver_Construct();
     assert(pSolver != nullptr);
 
     // This NodeList class lives entirely in the solver - the testbed only has an interface pointer
-    Sandbox::INodeList* pNodeList = pSolver->CreateNodeList();
+    Sandbox::INodeList* pNodeList = Solver_INodeList_Construct();
 
     // these TestbedNodes live entirely in the testbed - the nodelist only gets interface pointers 
     pNodeList->AddNode(new TestbedNode( 1,2,3 ));
