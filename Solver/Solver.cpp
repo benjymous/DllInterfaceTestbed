@@ -52,9 +52,3 @@ namespace Sandbox
 
 DeclareTypeFactory(Sandbox, SolverDll, ISolver, Solver);
 DeclareTypeFactory(Sandbox, SolverDll, INodeList, NodeList);
-
-// namespace Sandbox
-// {
-// 	INodeList* SolverDll_INodeList_Construct() { return new NodeList; }
-// 	void SolverDll_INodeList_Delete(INodeList* obj) { delete obj; }
-// }
