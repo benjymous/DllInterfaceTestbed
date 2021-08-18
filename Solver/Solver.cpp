@@ -12,7 +12,7 @@ namespace Sandbox
 		{
 			_nodes.push_back(std::shared_ptr<ISolverNode>(pNode));
 		}
-		int Count() const
+		size_t Count() const
 		{
 			return _nodes.size();
 		}
